@@ -12,110 +12,91 @@ body{
     text-align:center;
     margin:0;
 }
-
 h1{
     color:#2e7d32;
     margin-top:30px;
 }
-
 .container{
     max-width:800px;
     margin:20px auto;
     background:white;
     padding:20px;
     border-radius:15px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
-
 input{
     padding:10px;
     margin:5px;
-    border-radius:10px;
-    border:1px solid #ccc;
-    font-size:16px;
+    width:80px;
+    text-align:center;
 }
-
 button{
-    padding:12px 20px;
-    border-radius:12px;
-    border:none;
-    background:#1f7a3a;
+    background:#2e7d32;
     color:white;
-    font-size:16px;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
     cursor:pointer;
 }
-
-.result{
+#output{
     margin-top:20px;
+    background:#e3f2fd;
     padding:15px;
-    background:#f0f6ff;
-    border-radius:12px;
+    border-radius:10px;
 }
 </style>
-
 </head>
+
 <body>
 
 <h1>تقويم بابل</h1>
 
 <div class="container">
+<h2>اختر التاريخ</h2>
 
-<h3>اختر التاريخ</h3>
-
-<input type="number" id="day" placeholder="اليوم" min="1" max="31">
-<input type="number" id="month" placeholder="الشهر" min="1" max="12">
+<input type="number" id="day" placeholder="اليوم">
+<input type="number" id="month" placeholder="الشهر">
 <input type="number" id="year" placeholder="السنة">
 
 <br><br>
-
 <button onclick="showDate()">عرض</button>
 
-<div class="result" id="output">
-اختر تاريخ ثم اضغط عرض
-</div>
-
+<div id="output">اختر تاريخ ثم اضغط عرض</div>
 </div>
 
 <script>
-<script>
-  function showDate(){
-    const d = parseInt(document.getElementById("day").value, 10);
-    const m = parseInt(document.getElementById("month").value, 10);
-    const y = parseInt(document.getElementById("year").value, 10);
+function showDate(){
 
+    let d = parseInt(document.getElementById("day").value);
+    let m = parseInt(document.getElementById("month").value);
+    let y = parseInt(document.getElementById("year").value);
     const out = document.getElementById("output");
 
-    // تحقق من الفراغ/الأرقام
-    if (Number.isNaN(d) || Number.isNaN(m) || Number.isNaN(y)) {
-      out.innerHTML = "الرجاء إدخال أرقام فقط (اليوم/الشهر/السنة).";
-      return;
+    if(!d || !m || !y){
+        out.innerHTML = "الرجاء إدخال جميع القيم";
+        return;
     }
 
-    // حدود عامة
-    if (y < 1 || y > 9999) {
-      out.innerHTML = "السنة غير صحيحة. أدخل سنة بين 1 و 9999.";
-      return;
-    }
-    if (m < 1 || m > 12) {
-      out.innerHTML = "الشهر غير صحيح. أدخل شهر بين 1 و 12.";
-      return;
+    if(m < 1 || m > 12){
+        out.innerHTML = "الشهر يجب أن يكون بين 1 و 12";
+        return;
     }
 
-    // عدد أيام كل شهر (افتراض ميلادي للتحقق)
-    const daysInMonth = new Date(y, m, 0).getDate(); // يعطي آخر يوم بالشهر m
-    if (d < 1 || d > daysInMonth) {
-      out.innerHTML = `اليوم غير صحيح لهذا الشهر. هذا الشهر يحتوي على ${daysInMonth} يوم فقط.`;
-      return;
+    let daysInMonth = 30;
+    if(m == 2){
+        daysInMonth = 29;
     }
 
-    // صيغة عرض مرتبة
-    const dd = String(d).padStart(2, "0");
-    const mm = String(m).padStart(2, "0");
-const out = document.getElementById("output");
+    if(d < 1 || d > daysInMonth){
+        out.innerHTML = `اليوم غير صحيح لهذا الشهر. هذا الشهر يحتوي على ${daysInMonth} يوم فقط.`;
+        return;
+    }
 
-out.innerHTML = `التاريخ المختار هو: ${dd}/${mm}/${y}`;
-  }
+    const dd = String(d).padStart(2,"0");
+    const mm = String(m).padStart(2,"0");
 
+    out.innerHTML = `التاريخ المختار هو: ${dd}/${mm}/${y}`;
+}
 </script>
 
 </body>
