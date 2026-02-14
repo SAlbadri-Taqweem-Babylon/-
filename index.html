@@ -1,78 +1,96 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تقويم بابل</title>
+
 <style>
 body{
     font-family: Arial;
-    text-align:center;
     background:#f4f6f9;
+    text-align:center;
+    margin:0;
 }
+
 h1{
     color:#2e7d32;
+    margin-top:30px;
 }
-.calendar{
-    display:grid;
-    grid-template-columns: repeat(7,1fr);
-    gap:5px;
+
+.container{
     max-width:800px;
     margin:20px auto;
-}
-.day{
     background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+input{
     padding:10px;
-    border-radius:8px;
-    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+    margin:5px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
 }
-.today{
-    background:#c8e6c9;
-    font-weight:bold;
-}
-.header{
-    font-weight:bold;
-    background:#2e7d32;
+
+button{
+    padding:12px 20px;
+    border-radius:12px;
+    border:none;
+    background:#1f7a3a;
     color:white;
-    padding:8px;
-    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.result{
+    margin-top:20px;
+    padding:15px;
+    background:#f0f6ff;
+    border-radius:12px;
 }
 </style>
-</head>
 
+</head>
 <body>
 
 <h1>تقويم بابل</h1>
-<p id="date"></p>
 
-<div class="calendar" id="calendar"></div>
+<div class="container">
+
+<h3>اختر التاريخ</h3>
+
+<input type="number" id="day" placeholder="اليوم" min="1" max="31">
+<input type="number" id="month" placeholder="الشهر" min="1" max="12">
+<input type="number" id="year" placeholder="السنة">
+
+<br><br>
+
+<button onclick="showDate()">عرض</button>
+
+<div class="result" id="output">
+اختر تاريخ ثم اضغط عرض
+</div>
+
+</div>
 
 <script>
+function showDate(){
+    let d = document.getElementById("day").value;
+    let m = document.getElementById("month").value;
+    let y = document.getElementById("year").value;
 
-const monthNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو",
-"يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+    if(d && m && y){
+        document.getElementById("output").innerHTML =
+        "التاريخ المختار هو: " + d + "/" + m + "/" + y;
+    } else {
+        document.getElementById("output").innerHTML =
+        "الرجاء إدخال جميع القيم.";
+    }
+}
+</script>
 
-const dayNames = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
-
-function generateCalendar(){
-    const calendar = document.getElementById("calendar");
-    calendar.innerHTML="";
-
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-
-    document.getElementById("date").innerHTML =
-    monthNames[month] + " " + year;
-
-    dayNames.forEach(day=>{
-        const div=document.createElement("div");
-        div.className="header";
-        div.innerText=day;
-        calendar.appendChild(div);
-    });
-
-    const firstDay = new Date(year,month,1).getDay();
-    const daysInMonth = new Date(year,month+1,0).getDate();
-
-    for(let i=0;i<firstDay;i++){
-        const
+</body>
+</html>
