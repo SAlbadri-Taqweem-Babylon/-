@@ -77,19 +77,45 @@ button{
 </div>
 
 <script>
-function showDate(){
-    let d = document.getElementById("day").value;
-    let m = document.getElementById("month").value;
-    let y = document.getElementById("year").value;
+<script>
+  function showDate(){
+    const d = parseInt(document.getElementById("day").value, 10);
+    const m = parseInt(document.getElementById("month").value, 10);
+    const y = parseInt(document.getElementById("year").value, 10);
 
-    if(d && m && y){
-        document.getElementById("output").innerHTML =
-        "التاريخ المختار هو: " + d + "/" + m + "/" + y;
-    } else {
-        document.getElementById("output").innerHTML =
-        "الرجاء إدخال جميع القيم.";
+    const out = document.getElementById("output");
+
+    // تحقق من الفراغ/الأرقام
+    if (Number.isNaN(d) || Number.isNaN(m) || Number.isNaN(y)) {
+      out.innerHTML = "الرجاء إدخال أرقام فقط (اليوم/الشهر/السنة).";
+      return;
     }
-}
+
+    // حدود عامة
+    if (y < 1 || y > 9999) {
+      out.innerHTML = "السنة غير صحيحة. أدخل سنة بين 1 و 9999.";
+      return;
+    }
+    if (m < 1 || m > 12) {
+      out.innerHTML = "الشهر غير صحيح. أدخل شهر بين 1 و 12.";
+      return;
+    }
+
+    // عدد أيام كل شهر (افتراض ميلادي للتحقق)
+    const daysInMonth = new Date(y, m, 0).getDate(); // يعطي آخر يوم بالشهر m
+    if (d < 1 || d > daysInMonth) {
+      out.innerHTML = `اليوم غير صحيح لهذا الشهر. هذا الشهر يحتوي على ${daysInMonth} يوم فقط.`;
+      return;
+    }
+
+    // صيغة عرض مرتبة
+    const dd = String(d).padStart(2, "0");
+    const mm = String(m).padStart(2, "0");
+
+    out.innerHTML = `التاريخ المختار هو: ${dd}/${mm}/${y}`;
+  }
+</script>
+
 </script>
 
 </body>
