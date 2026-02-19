@@ -1,111 +1,134 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تقويم بابل</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تقويم بابل</title>
 
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment-hijri@2.1.2/moment-hijri.js"></script>
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment-hijri@2.1.2/moment-hijri.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment-jalaali@0.9.4/build/moment-jalaali.js"></script>
 
-<style>
-body{
-font-family: Arial;
-background:#f4f6f9;
-text-align:center;
-margin:0;
-}
-.container{
-max-width:800px;
-margin:20px auto;
-background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-input, select{
-padding:10px;
-margin:6px;
-width:120px;
-text-align:center;
-border:1px solid #ccc;
-border-radius:8px;
-font-size:16px;
-}
-button{
-background:#2e7d32;
-color:white;
-border:none;
-padding:12px 25px;
-border-radius:10px;
-cursor:pointer;
-margin-top:10px;
-font-size:18px;
-}
-#output{
-margin-top:20px;
-background:#e3f2fd;
-padding:15px;
-border-radius:10px;
-font-size:18px;
-font-weight:700;
-}
-</style>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment-hijri@2.1.2/moment-hijri.js"></script>
+  <style>
+    body{font-family:Arial,sans-serif;background:#f4f6f9;text-align:center;margin:0;padding:0}
+    h1{margin-top:28px;color:#1f6f43;font-size:42px;letter-spacing:1px}
+    .container{max-width:820px;margin:18px auto;background:#fff;padding:22px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.10)}
+    .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+    input,select{padding:12px;margin:4px;width:150px;text-align:center;border:1px solid #ddd;border-radius:10px;font-size:18px;outline:none}
+    select{width:300px}
+    button{background:#1f6f43;color:#fff;border:none;padding:12px 26px;border-radius:12px;cursor:pointer;margin-top:10px;font-size:20px;font-weight:700}
+    button:active{transform:scale(.99)}
+    .hint{margin-top:10px;color:#444;font-size:14px;line-height:1.6}
+    .results{margin-top:18px;background:#f3f7ff;padding:16px;border-radius:14px;text-align:right;font-size:18px;line-height:1.9}
+    .line{background:#fff;border-radius:10px;padding:10px 12px;margin:8px 0;border:1px solid #e7eefc}
+    .label{color:#1f6f43;font-weight:700;margin-left:6px}
+    .error{margin-top:14px;background:#ffecec;color:#b10000;padding:12px;border-radius:12px;font-size:16px;text-align:center;border:1px solid #ffd0d0}
+  </style>
 </head>
 
 <body>
+  <h1>تقويم بابل</h1>
 
-<h1>تقويم بابل</h1>
+  <div class="container">
+    <h2>أدخل التاريخ</h2>
 
-<div class="container">
+    <div class="row">
+      <input type="number" id="day" placeholder="اليوم" />
+      <input type="number" id="month" placeholder="الشهر" />
+      <input type="number" id="year" placeholder="السنة" />
+    </div>
 
-<input type="number" id="day" placeholder="اليوم">
-<input type="number" id="month" placeholder="الشهر">
-<input type="number" id="year" placeholder="السنة">
+    <div class="row">
+      <select id="inputType">
+        <option value="g">الإدخال: ميلادي</option>
+        <option value="h">الإدخال: هجري قمري</option>
+        <option value="b">الإدخال: بابلي شمسي (جلالي رقماً)</option>
+      </select>
 
-<br>
+      <input type="number" id="hijriOffset" value="0" placeholder="تصحيح الهجري ± يوم" />
+    </div>
 
-<select id="mode">
-<option value="g2h">ميلادي → هجري</option>
-<option value="h2g">هجري → ميلادي</option>
-</select>
+    <button onclick="convertAll()">تحويل</button>
 
-<br>
+    <div class="hint">
+      ✅ البابلي الشمسي = نفس الجلالي بالحساب، لكن أسماء الأشهر تبدأ بـ <b>رمضان</b>.<br>
+      ✅ يمكنك تصحيح الهجري (مثلاً +1 أو -1) لتطابق تقويم هاتفك/الرؤية.
+    </div>
 
-<button onclick="convert()">تحويل</button>
+    <div id="msg"></div>
 
-<div id="output">أدخل التاريخ ثم اضغط تحويل</div>
-
-</div>
+    <div class="results" id="results" style="display:none;">
+      <div class="line"><span class="label">ميلادي:</span> <span id="outG"></span></div>
+      <div class="line"><span class="label">هجري قمري:</span> <span id="outH"></span></div>
+      <div class="line"><span class="label">بابلي شمسي:</span> <span id="outB"></span></div>
+    </div>
+  </div>
 
 <script>
-function convert(){
+  const babylonMonths = [
+    "رمضان","شوال","ذو القعدة","ذو الحجة",
+    "محرم","صفر","ربيع الأول","ربيع الثاني",
+    "جمادى الأولى","جمادى الآخرة","رجب","شعبان"
+  ];
 
-const d = document.getElementById("day").value;
-const m = document.getElementById("month").value;
-const y = document.getElementById("year").value;
-const mode = document.getElementById("mode").value;
-const out = document.getElementById("output");
+  function showError(text){
+    document.getElementById("results").style.display = "none";
+    document.getElementById("msg").innerHTML = `<div class="error">${text}</div>`;
+  }
+  function clearError(){
+    document.getElementById("msg").innerHTML = "";
+  }
 
-if(!d || !m || !y){
-out.innerHTML = "الرجاء إدخال جميع القيم";
-return;
-}
+  function convertAll(){
+    clearError();
 
-if(mode === "g2h"){
-let g = moment(`${y}-${m}-${d}`, "YYYY-M-D");
-out.innerHTML = "النتيجة: " + g.format("iYYYY/iM/iD");
-}
+    const d = parseInt(document.getElementById("day").value, 10);
+    const m = parseInt(document.getElementById("month").value, 10);
+    const y = parseInt(document.getElementById("year").value, 10);
+    const inputType = document.getElementById("inputType").value;
+    const offset = parseInt(document.getElementById("hijriOffset").value || "0", 10);
 
-if(mode === "h2g"){
-let h = moment(`${y}/${m}/${d}`, "iYYYY/iM/iD");
-out.innerHTML = "النتيجة: " + h.format("YYYY-MM-DD");
-}
+    if(!d || !m || !y){
+      showError("الرجاء إدخال اليوم والشهر والسنة");
+      return;
+    }
 
-}
+    let baseG; // لحظة ميلادية كأساس
+
+    if(inputType === "g"){
+      baseG = moment(`${y}-${m}-${d}`, "YYYY-M-D", true);
+      if(!baseG.isValid()){ showError("تاريخ ميلادي غير صحيح"); return; }
+    }
+
+    if(inputType === "h"){
+      const h = moment(`${y}/${m}/${d}`, "iYYYY/iM/iD", true);
+      if(!h.isValid()){ showError("تاريخ هجري قمري غير صحيح"); return; }
+      baseG = h.clone().subtract(offset, "days"); // عكس التصحيح عند الإدخال
+    }
+
+    if(inputType === "b"){
+      const b = moment(`${y}/${m}/${d}`, "jYYYY/jM/jD", true);
+      if(!b.isValid()){ showError("تاريخ بابلي شمسي/جلالي غير صحيح"); return; }
+      baseG = b.clone(); // داخلياً moment-jalaali يحفظه ويقدر يطلع ميلادي
+    }
+
+    // النتائج
+    const outG = baseG.format("YYYY-MM-DD");
+    const outH = baseG.clone().add(offset, "days").format("iYYYY/iM/iD");
+
+    const jy = baseG.jYear();
+    const jm = baseG.jMonth() + 1; // 1..12
+    const jd = baseG.jDate();
+    const bName = babylonMonths[jm - 1] || ("شهر " + jm);
+    const outB = `${jd} ${bName} ${jy}  (رقمياً: ${jy}/${jm}/${jd})`;
+
+    document.getElementById("outG").textContent = outG;
+    document.getElementById("outH").textContent = outH;
+    document.getElementById("outB").textContent = outB;
+
+    document.getElementById("results").style.display = "block";
+  }
 </script>
-
 </body>
 </html>
