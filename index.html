@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>تقويم بابل</title>
 
 <!-- Libraries -->
@@ -11,149 +12,86 @@
 <script src="https://cdn.jsdelivr.net/npm/moment-jalaali@0.9.2/build/moment-jalaali.js"></script>
 
 <style>
-:root{
---teal:#0b6b69;
---teal2:#0a5f5d;
---bg:#f2f4f6;
---card:#ffffff;
---text:#0f172a;
---muted:#64748b;
---line:#e5e7eb;
---accent:#d18b00;
-}
-*{box-sizing:border-box}
 body{
-margin:0;
-font-family:Arial,"Cairo","Amiri",sans-serif;
-background:var(--bg);
-color:var(--text);
+    margin:0;
+    font-family:Arial;
+    background:#f2f4f6;
 }
 
-/* Header */
 .topbar{
-background:var(--teal);
-color:#fff;
-padding:14px;
-text-align:center;
-}
-.topbar h1{
-margin:0;
-font-size:28px;
-}
-.topbar .sub{
-margin-top:6px;
-font-size:15px;
-opacity:.95;
+    background:#0b6b69;
+    color:#fff;
+    text-align:center;
+    padding:18px;
 }
 
-/* Layout */
+.title{
+    font-size:34px;
+    font-weight:800;
+}
+
+.sub{
+    font-size:26px;
+    margin-top:8px;
+}
+
 .wrap{
-width:min(820px,100%);
-margin:auto;
-padding:12px;
+    max-width:900px;
+    margin:15px auto;
+    padding:12px;
 }
 
 .card{
-background:var(--card);
-border-radius:18px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-overflow:hidden;
-margin-top:12px;
+    background:#fff;
+    border-radius:18px;
+    padding:14px;
 }
 
-.header-strip{
-padding:14px;
-border-bottom:1px solid var(--line);
-background:#f8fafc;
-font-size:20px;
-font-weight:bold;
-color:var(--teal2);
+.month-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:28px;
+    margin-bottom:10px;
 }
 
-.month-nav{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:12px;
-border-bottom:1px solid var(--line);
+.btn{
+    background:#0b6b69;
+    color:#fff;
+    border:none;
+    padding:10px 18px;
+    border-radius:25px;
+    cursor:pointer;
+    font-size:16px;
 }
 
-.navbtn{
-background:var(--teal);
-color:#fff;
-border:none;
-padding:10px 16px;
-border-radius:999px;
-font-weight:bold;
-cursor:pointer;
+.weekdays{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    text-align:center;
+    color:#6b7280;
+    margin-bottom:8px;
+    font-weight:700;
 }
 
-.calendar{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:6px;
-padding:12px;
+.grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:8px;
 }
 
-.day-name{
-text-align:center;
-font-weight:bold;
-color:var(--muted);
-padding:6px 0;
+.cell{
+    background:#fff;
+    border:1px solid #dfe3e7;
+    border-radius:12px;
+    min-height:75px;
+    text-align:center;
+    padding-top:8px;
+    font-weight:bold;
 }
 
-.day{
-background:#fff;
-border:1px solid var(--line);
-border-radius:10px;
-padding:8px;
-min-height:58px;
-text-align:center;
-font-weight:bold;
-}
-
-.day small{
-display:block;
-margin-top:4px;
-color:var(--muted);
-font-size:12px;
-}
-
-.today{
-border:2px solid var(--accent);
-background:#fff7e6;
-}
-
-/* Converter */
-.converter{
-padding:14px;
-display:grid;
-gap:10px;
-}
-
-input,select{
-width:100%;
-padding:10px;
-border:1px solid var(--line);
-border-radius:10px;
-font-size:16px;
-}
-
-button.convert{
-background:var(--teal);
-color:#fff;
-border:none;
-padding:12px;
-border-radius:10px;
-font-size:18px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.result{
-padding:12px;
-line-height:1.8;
-font-weight:bold;
+.cell small{
+    color:#6b7280;
 }
 </style>
 </head>
@@ -161,126 +99,88 @@ font-weight:bold;
 <body>
 
 <div class="topbar">
-<h1>تقويم بابل</h1>
-<div class="sub">الهجري الشمسي • الهجري • الميلادي</div>
+    <div class="title">تقويم بابل</div>
+    <div class="sub">الهجري الشمسي • الهجري • الميلادي</div>
 </div>
 
 <div class="wrap">
-
 <div class="card">
-<div class="header-strip">التقويم</div>
 
-<div class="month-nav">
-<button class="navbtn" onclick="prevMonth()">الشهر القادم</button>
-<strong id="monthTitle">-</strong>
-<button class="navbtn" onclick="nextMonth()">قبل شهر واحد</button>
+<div class="month-header">
+    <button class="btn" onclick="prevMonth()">قبل شهر واحد</button>
+    <div id="monthTitle"></div>
+    <button class="btn" onclick="nextMonth()">الشهر القادم</button>
 </div>
 
-<div id="daysHeader" class="calendar"></div>
-<div id="calendarBody" class="calendar"></div>
-
+<div class="weekdays">
+<div>السبت</div><div>الأحد</div><div>الإثنين</div>
+<div>الثلاثاء</div><div>الأربعاء</div><div>الخميس</div><div>الجمعة</div>
 </div>
 
-<div class="card">
-<div class="header-strip">تحويل التاريخ</div>
-
-<div class="converter">
-<input id="d" type="number" placeholder="اليوم">
-<input id="m" type="number" placeholder="الشهر">
-<input id="y" type="number" placeholder="السنة">
-
-<select id="type">
-<option value="miladi">ميلادي</option>
-<option value="hijri">هجري</option>
-<option value="shamsi">هجري شمسي</option>
-</select>
-
-<button class="convert" onclick="convertDate()">تحويل</button>
-
-<div id="result" class="result"></div>
-</div>
+<div class="grid" id="calendar"></div>
 
 </div>
-
 </div>
 
 <script>
 
-moment.loadPersian({
-usePersianDigits:false,
-dialect:'persian-modern'
-});
-let current = moment().jYear(moment().year());
+let current = moment();
 
-const dayNames = ["السبت","الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"];
+function getSolarDate(date){
+    const m = moment(date);
+    return {
+        year: parseInt(m.format("jYYYY")),
+        month: parseInt(m.format("jM")),
+        day: parseInt(m.format("jD"))
+    };
+}
 
 function renderCalendar(){
-document.getElementById("monthTitle").innerHTML =
-current.format("jYYYY/jM (هجري شمسي)");
 
-let head="";
-dayNames.forEach(d=> head += `<div class="day-name">${d}</div>`);
-document.getElementById("daysHeader").innerHTML=head;
+    const cal = document.getElementById("calendar");
+    cal.innerHTML="";
 
-let start=current.clone().startOf("jMonth");
-let end=current.clone().endOf("jMonth");
+    const s = getSolarDate(current);
+    document.getElementById("monthTitle").innerHTML =
+        s.year + "/" + s.month + " (هجري شمسي)";
 
-let body="";
+    let start = current.clone().startOf('month');
+    let end = current.clone().endOf('month');
 
-let startDay=start.day();
-for(let i=0;i<startDay;i++){
-body += `<div></div>`;
-}
+    let startDay = start.day();
 
-for(let i=1;i<=end.jDate();i++){
-let d=start.clone().jDate(i);
-let today = moment().format("jYYYY/jM/jD")==d.format("jYYYY/jM/jD");
+    for(let i=0;i<startDay;i++){
+        const empty=document.createElement("div");
+        cal.appendChild(empty);
+    }
 
-body += `
-<div class="day ${today?'today':''}">
-${d.jDate()}
-<small>${d.format("iD")}</small>
-</div>
-`;
-}
+    for(let d=1; d<=end.date(); d++){
 
-document.getElementById("calendarBody").innerHTML=body;
+        const date = current.clone().date(d);
+        const solar = getSolarDate(date);
+
+        const cell=document.createElement("div");
+        cell.className="cell";
+
+        cell.innerHTML =
+            d + "<br><small>" + solar.day + "</small>";
+
+        cal.appendChild(cell);
+    }
 }
 
 function nextMonth(){
-current.add(1,"jMonth");
-renderCalendar();
+    current.add(1,'month');
+    renderCalendar();
 }
+
 function prevMonth(){
-current.subtract(1,"jMonth");
-renderCalendar();
-}
-
-function convertDate(){
-let d=document.getElementById("d").value;
-let m=document.getElementById("m").value;
-let y=document.getElementById("y").value;
-let type=document.getElementById("type").value;
-
-if(!d||!m||!y)return;
-
-let mo;
-
-if(type==="miladi"){
-mo = moment(`${y}-${m}-${d}`,"YYYY-M-D");
-}else if(type==="hijri"){
-mo = moment(`${y}-${m}-${d}`,"iYYYY-iM-iD");
-}else{
-mo = moment(`${y}-${m}-${d}`,"jYYYY-jM-jD");
-}
-
-document.getElementById("result").innerHTML =
-`الميلادي: ${mo.format("YYYY/MM/DD")}<br>
-الهجري: ${mo.format("iYYYY/iM/iD")}<br>
-الهجري الشمسي: ${mo.format("jYYYY/jM/jD")}`;
+    current.subtract(1,'month');
+    renderCalendar();
 }
 
 renderCalendar();
+
 </script>
 
 </body>
